@@ -1,8 +1,11 @@
 package com.project.codewithmark.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,13 +22,14 @@ import com.project.codewithmark.model.entity.User;
 import com.project.codewithmark.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final String jwtSecret = "m4rkv1nc3nt"; // use secure secret in production
+    SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     private final long jwtExpirationMs = 86400000; // 1 day
 
     @Autowired
@@ -133,10 +137,10 @@ public class UserService {
 
     public String generateJwtToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key, Jwts.SIG.HS512)
                 .compact();
     }
 
