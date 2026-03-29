@@ -24,7 +24,7 @@ import com.project.codewithmark.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class UserController {
 
     private final UserService userService;
@@ -48,15 +48,12 @@ public class UserController {
     @PostMapping("/auth/register")
     public ResponseEntity<UserResponse> registerUser(
             @Valid @RequestBody UserRequest userRequest) {
-        UserResponse createdUser = userService.registerUser(userRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(userRequest));
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(loginResponse);
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword()));
     }
 
     @PutMapping("/users/{id}")

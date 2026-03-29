@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.project.codewithmark.dto.mapper.TherapistMapper;
 import com.project.codewithmark.dto.mapper.UserMapper;
 import com.project.codewithmark.dto.therapist_dto.TherapistRequest;
 import com.project.codewithmark.dto.therapist_dto.TherapistResponse;
@@ -19,17 +20,17 @@ import com.project.codewithmark.repository.TherapistRepository;
 public class TherapistService {
         private final TherapistRepository therapistRepository;
         private final AppointmentRepository appointmentRepository;
+        private final TherapistMapper therapistMapper;
 
-        @Autowired
-        private UserMapper userMapper;
-
-        public TherapistService(TherapistRepository therapistRepository, AppointmentRepository appointmentRepository) {
+        public TherapistService(TherapistRepository therapistRepository, AppointmentRepository appointmentRepository,
+                        TherapistMapper therapistMapper) {
                 this.therapistRepository = therapistRepository;
                 this.appointmentRepository = appointmentRepository;
+                this.therapistMapper = therapistMapper;
         }
 
         public List<TherapistResponse> getAllTherapists() {
-                return userMapper.toTherapistResponseList(therapistRepository.findAll());
+                return therapistMapper.toTherapistResponseList(therapistRepository.findAll());
         }
 
         // Service method to get therapist by ID
@@ -37,7 +38,7 @@ public class TherapistService {
                 Therapist therapist = therapistRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Therapist not found with id: " + id));
 
-                return userMapper.toTherapistResponse(therapist);
+                return therapistMapper.toTherapistResponse(therapist);
 
         }
 
@@ -46,14 +47,14 @@ public class TherapistService {
                 Therapist therapist = therapistRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Therapist not found with email: " + email));
 
-                return userMapper.toTherapistResponse(therapist);
+                return therapistMapper.toTherapistResponse(therapist);
         }
 
         // Service method to get therapists by status
         public List<TherapistResponse> getTherapistsByStatus(String status) {
                 return therapistRepository.findByStatusIgnoreCase(status)
                                 .stream()
-                                .map(userMapper::toTherapistResponse)
+                                .map(therapistMapper::toTherapistResponse)
                                 .toList();
         }
 
@@ -96,10 +97,10 @@ public class TherapistService {
                                         + " already exists");
                 }
 
-                Therapist therapist = userMapper.toTherapistEntity(therapistRequest);
+                Therapist therapist = therapistMapper.toTherapistEntity(therapistRequest);
                 therapist.setPassword(BCrypt.hashpw(therapistRequest.getPassword(), BCrypt.gensalt()));
 
-                return userMapper.toTherapistResponse(therapistRepository.save(therapist));
+                return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
         }
 
         // Service method to update therapist by ID
@@ -110,9 +111,9 @@ public class TherapistService {
                 Therapist therapist = therapistRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Therapist not found with id: " + id));
 
-                userMapper.updateTherapistFromRequest(therapistRequest, therapist);
+                therapistMapper.updateTherapistFromRequest(therapistRequest, therapist);
 
-                return userMapper.toTherapistResponse(therapistRepository.save(therapist));
+                return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
 
         }
 
@@ -124,9 +125,9 @@ public class TherapistService {
                 Therapist therapist = therapistRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Therapist not found with id: " + id));
 
-                userMapper.partiallyUpdateTherapistFromRequest(therapistRequest, therapist);
+                therapistMapper.partiallyUpdateTherapistFromRequest(therapistRequest, therapist);
 
-                return userMapper.toTherapistResponse(therapistRepository.save(therapist));
+                return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
 
         }
 

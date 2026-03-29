@@ -1,7 +1,7 @@
 package com.project.codewithmark.dto.user_dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,22 +14,24 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserRequest {
 
-    @NotNull(message = "Username is required")
+    @NotBlank(message = "Username is required")
     private String username;
 
+    @NotBlank(message = "Password is required")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must be at least 8 characters long and contain both letters and numbers")
     private String password;
 
-    @NotNull(message = "Email is required")
+    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotNull(message = "First name is required")
+    @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotNull(message = "Last name is required")
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
+    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\+639\\d{9}$", message = "Invalid phone number format")
     private String phoneNumber;
 

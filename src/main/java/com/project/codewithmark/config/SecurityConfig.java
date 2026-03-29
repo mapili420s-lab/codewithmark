@@ -2,8 +2,8 @@ package com.project.codewithmark.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -14,32 +14,21 @@ public class SecurityConfig {
                 http
                                 // Disable CSRF for APIs/testing
                                 .csrf(csrf -> csrf.disable())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 // Authorization rules
                                 .authorizeHttpRequests(auth -> auth
                                                 // Landing page and static resources accessible without login
-                                                .requestMatchers("/", "/index", "/terms", "/privacy", "/contact_us",
-                                                                "/user",
-                                                                "/therapist",
-                                                                "/admin",
-                                                                "/css/**",
-                                                                "/images/**",
-                                                                "/js/**")
-                                                .permitAll()
+                                                .requestMatchers("/api/v1/auth/**").permitAll()
+
                                                 // Open API endpoints (like user registration)
-                                                .requestMatchers("/api/users/**").permitAll()
-                                                .requestMatchers("/api/therapists/**").permitAll()
-                                                .requestMatchers("/api/appointments/**").permitAll()
-                                                .requestMatchers("/api/service-types/**").permitAll()
-                                                .requestMatchers(HttpMethod.PATCH, "/your-endpoint/**").permitAll()
+                                                .requestMatchers("/api/v1/users/**").permitAll()
+
                                                 // Everything else requires authentication
                                                 .anyRequest().authenticated())
                                 // Enable form login for browser UI
-                                .formLogin(form -> form
-                                                .loginPage("/") // optional custom login page
-                                                .permitAll());
-                // // Enable HTTP Basic for API testing
-                // .httpBasic(httpBasic -> {
-                // });
+                                .formLogin(form -> form.disable())
+                                .httpBasic(basic -> basic.disable());
 
                 return http.build();
         }

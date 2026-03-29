@@ -1,6 +1,5 @@
 package com.project.codewithmark.service;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
@@ -8,7 +7,6 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -20,24 +18,24 @@ import com.project.codewithmark.dto.user_dto.LoginResponse;
 import com.project.codewithmark.dto.user_dto.UserRequest;
 import com.project.codewithmark.dto.user_dto.UserResponse;
 import com.project.codewithmark.model.entity.User;
+import com.project.codewithmark.model.enums.AccountStatus;
+import com.project.codewithmark.model.enums.Role;
 import com.project.codewithmark.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final String jwtSecret = "m4rkv1nc3nt"; // use secure secret in production
-    SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    private final SecretKey key;
     private final long jwtExpirationMs = 86400000; // 1 day
+    private final UserMapper userMapper;
 
-    @Autowired
-    private UserMapper userMapper;
-
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.key = Jwts.SIG.HS512.key().build();
     }
 
     // Service method to get all users
@@ -79,6 +77,8 @@ public class UserService {
 
         User user = userMapper.toUserEntity(userRequest);
         user.setPassword(BCrypt.hashpw(userRequest.getPassword(), BCrypt.gensalt()));
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setRoles(Collections.singleton(Role.CLIENT));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -131,9 +131,10 @@ public class UserService {
         String token = generateJwtToken(user);
 
         LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
         loginResponse.setUsername(user.getUsername());
         loginResponse.setEmail(user.getEmail());
-        loginResponse.setToken(token);
+        loginResponse.setRoles(user.getRoles());
 
         return loginResponse;
     }
@@ -141,6 +142,7 @@ public class UserService {
     public String generateJwtToken(User user) {
         return Jwts.builder()
                 .subject(user.getEmail())
+                .claim("roles", user.getRoles())
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key, Jwts.SIG.HS512)
@@ -160,9 +162,8 @@ public class UserService {
                     cb.like(cb.lower(root.get("username")), match),
                     cb.like(cb.lower(root.get("firstName")), match),
                     cb.like(cb.lower(root.get("lastName")), match),
-                    cb.equal(cb.lower(root.get("email")), match),
-                    cb.equal(cb.lower(root.get("status")), match),
-                    cb.equal(root.get("phoneNumber"), match));
+                    cb.like(cb.lower(root.get("email")), match),
+                    cb.equal(root.get("phoneNumber"), keyword));
 
         };
         return userMapper.toUserResponseList(userRepository.findAll(spec));

@@ -2,12 +2,11 @@ package com.project.codewithmark.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.codewithmark.dto.appointment_dto.AppointmentRequest;
 import com.project.codewithmark.dto.appointment_dto.AppointmentResponse;
-import com.project.codewithmark.dto.mapper.UserMapper;
+import com.project.codewithmark.dto.mapper.AppointmentMapper;
 import com.project.codewithmark.model.entity.Appointment;
 import com.project.codewithmark.model.entity.ServiceType;
 import com.project.codewithmark.model.entity.Therapist;
@@ -25,21 +24,21 @@ public class AppointmentService {
     private final TherapistRepository therapistRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
+    private final AppointmentMapper appointmentMapper;
 
     public AppointmentService(AppointmentRepository appointmentRepository, TherapistRepository therapistRepository,
-            ServiceTypeRepository serviceTypeRepository, UserRepository userRepository) {
+            ServiceTypeRepository serviceTypeRepository, UserRepository userRepository,
+            AppointmentMapper appointmentMapper) {
         this.appointmentRepository = appointmentRepository;
         this.therapistRepository = therapistRepository;
         this.serviceTypeRepository = serviceTypeRepository;
         this.userRepository = userRepository;
+        this.appointmentMapper = appointmentMapper;
     }
 
     // Return all appointments
     public List<AppointmentResponse> getAllAppointments() {
-        return userMapper.toAppointmentResponseList(appointmentRepository.findAll());
+        return appointmentMapper.toAppointmentResponseList(appointmentRepository.findAll());
     }
 
     // Create an appointments
@@ -54,13 +53,13 @@ public class AppointmentService {
         ServiceType serviceType = serviceTypeRepository.findById(appointmentRequest.getServiceType())
                 .orElseThrow(() -> new RuntimeException("Service Type not found"));
 
-        Appointment appointment = userMapper.toAppoinmentEntity(appointmentRequest);
+        Appointment appointment = appointmentMapper.toAppoinmentEntity(appointmentRequest);
 
         appointment.setTherapist(therapist);
         appointment.setUser(user);
         appointment.setServiceType(serviceType);
         appointment.setAppointmentStatus(AppointmentStatus.PENDING);
 
-        return userMapper.toAppointmentResponse(appointmentRepository.save(appointment));
+        return appointmentMapper.toAppointmentResponse(appointmentRepository.save(appointment));
     }
 }
