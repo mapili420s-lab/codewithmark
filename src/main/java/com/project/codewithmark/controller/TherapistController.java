@@ -1,4 +1,4 @@
-package com.project.codewithmark.controller.therapist_controller;
+package com.project.codewithmark.controller;
 
 import java.util.List;
 
