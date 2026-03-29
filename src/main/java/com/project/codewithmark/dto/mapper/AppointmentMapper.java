@@ -22,8 +22,8 @@ public interface AppointmentMapper {
     @Mapping(target = "therapist", ignore = true) // Handled in Service
     @Mapping(target = "user", ignore = true) // Handled in Service
     @Mapping(target = "serviceType", ignore = true) // Handled in Service
-    @Mapping(target = "appointmentStatus", constant = "PENDING") // Example default
-    Appointment toAppoinmentEntity(AppointmentRequest appointmentRequest);
+    @Mapping(target = "endTime", ignore = true) // Calculated in Service logic
+    Appointment toAppointmentEntity(AppointmentRequest appointmentRequest);
 
     List<AppointmentResponse> toAppointmentResponseList(List<Appointment> appointment);
 

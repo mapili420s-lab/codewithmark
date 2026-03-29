@@ -28,14 +28,11 @@ public class AppointmentResponse {
 
     private LocalDate date;
     private LocalTime startTime;
+    private LocalTime endTime;
 
     private AppointmentStatus appointmentStatus;
 
     private String notes;
-    private String paymentStatus;
-
-    private Boolean reminderSent;
-    private String location;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

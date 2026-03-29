@@ -1,6 +1,7 @@
 package com.project.codewithmark.repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             LocalDate appointmentDate);
 
     boolean existsByUserAndDate(User user, LocalDate date);
+
+    List<Appointment> findByTherapistIsNullAndAppointmentStatus(AppointmentStatus status);
+
+    List<Appointment> findByTherapistId(Long id);
+
+    boolean existsByTherapistAndDateAndStartTimeBetween(Therapist therapist, LocalDate localDate, LocalTime startTime,
+            LocalTime endTime);
 }
