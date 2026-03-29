@@ -1,6 +1,7 @@
 package com.project.codewithmark.service;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +12,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.project.codewithmark.dto.mapper.UserMapper;
+import com.project.codewithmark.dto.user_dto.LoginResponse;
 import com.project.codewithmark.dto.user_dto.UserRequest;
 import com.project.codewithmark.dto.user_dto.UserResponse;
-import com.project.codewithmark.dto.user_dto.LoginResponse;
 import com.project.codewithmark.model.entity.User;
 import com.project.codewithmark.repository.UserRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final String jwtSecret = "m4rkv1nc3nt"; // use secure secret in production
+    private final long jwtExpirationMs = 86400000; // 1 day
 
     @Autowired
     private UserMapper userMapper;
@@ -115,7 +121,23 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        return userMapper.toLoginResponse(user);
+        String token = generateJwtToken(user);
+
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setUsername(user.getUsername());
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setToken(token);
+
+        return loginResponse;
+    }
+
+    public String generateJwtToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
     public List<UserResponse> searchUsers(String keyword) {
