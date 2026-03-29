@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.project.codewithmark.dto.mapper.UserMapper;
 import com.project.codewithmark.dto.user_dto.UserRequest;
 import com.project.codewithmark.dto.user_dto.UserResponse;
+import com.project.codewithmark.dto.user_dto.LoginResponse;
 import com.project.codewithmark.model.entity.User;
 import com.project.codewithmark.repository.UserRepository;
 
@@ -106,7 +107,7 @@ public class UserService {
     }
 
     // Service method to authenticate user
-    public UserResponse authenticateUser(String email, String password) {
+    public LoginResponse authenticateUser(String email, String password) {
         User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
@@ -114,7 +115,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        return userMapper.toUserResponse(user);
+        return userMapper.toLoginResponse(user);
     }
 
     public List<UserResponse> searchUsers(String keyword) {

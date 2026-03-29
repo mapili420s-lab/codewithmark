@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponse {
-    private String username;
+
     private String email;
     private String password;
-    private String error;
+
 }

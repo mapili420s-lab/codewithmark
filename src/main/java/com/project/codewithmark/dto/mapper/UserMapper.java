@@ -15,6 +15,7 @@ import com.project.codewithmark.dto.therapist_dto.TherapistRequest;
 import com.project.codewithmark.dto.therapist_dto.TherapistResponse;
 import com.project.codewithmark.dto.user_dto.UserRequest;
 import com.project.codewithmark.dto.user_dto.UserResponse;
+import com.project.codewithmark.dto.user_dto.LoginResponse;
 import com.project.codewithmark.model.entity.Appointment;
 import com.project.codewithmark.model.entity.ServiceType;
 import com.project.codewithmark.model.entity.Therapist;
@@ -22,6 +23,8 @@ import com.project.codewithmark.model.entity.User;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
+
+        LoginResponse toLoginResponse(User user);
 
         UserResponse toUserResponse(User user);
 
