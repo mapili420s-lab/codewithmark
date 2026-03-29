@@ -3,6 +3,7 @@ package com.project.codewithmark.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1")
+@PreAuthorize("hasAuthority('ROLE_THERAPIST')")
 public class TherapistController {
 
     private final TherapistService therapistService;

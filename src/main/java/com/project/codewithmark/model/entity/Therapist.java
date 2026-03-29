@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.codewithmark.model.enums.AccountStatus;
 import com.project.codewithmark.model.enums.Role;
 import com.project.codewithmark.model.enums.TherapistStatus;
@@ -46,6 +47,8 @@ public class Therapist {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @JsonIgnore
     private String password;
     private String phoneNumber;
 

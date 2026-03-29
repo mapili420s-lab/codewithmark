@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.codewithmark.model.enums.AccountStatus;
 import com.project.codewithmark.model.enums.Role;
 
@@ -42,6 +43,7 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String username;
+    @JsonIgnore
     private String password;
     @Column(unique = true, nullable = false)
     private String email;

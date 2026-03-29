@@ -10,7 +10,7 @@ import com.project.codewithmark.dto.appointment_dto.AppointmentRequest;
 import com.project.codewithmark.dto.appointment_dto.AppointmentResponse;
 import com.project.codewithmark.model.entity.Appointment;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { ServiceTypeMapper.class })
 public interface AppointmentMapper {
 
     @Mapping(source = "user", target = "user")

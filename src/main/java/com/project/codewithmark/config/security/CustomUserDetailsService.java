@@ -49,7 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 email,
                 password,
                 roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                        .map(role -> new SimpleGrantedAuthority(role.name()))
                         .collect(Collectors.toSet()));
     }
 }
