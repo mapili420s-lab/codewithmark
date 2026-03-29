@@ -2,6 +2,7 @@ package com.project.codewithmark.model.entity;
 
 import com.project.codewithmark.model.enums.ServiceTypeEnum;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,6 +27,7 @@ public class ServiceType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Primary key
 
+    @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
     private ServiceTypeEnum type;
 

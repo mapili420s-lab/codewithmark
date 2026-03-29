@@ -37,14 +37,12 @@ public class ServiceTypeService {
         return serviceTypeMapper.toServiceTypeResponse(serviceType);
     }
 
-    public ServiceTypeResponse getServiceTypeByType(String type) {
+    public ServiceTypeResponse getServiceTypeByType(ServiceTypeEnum type) {
 
-        ServiceTypeEnum enumType = ServiceTypeEnum.valueOf(type);
-
-        ServiceType serviceType = serviceTypeRepository.findByType(enumType)
+        ServiceType serviceType = serviceTypeRepository.findByType(type)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Service type not found with type: " + enumType));
+                                "Service type not found with type: " + type));
 
         return serviceTypeMapper.toServiceTypeResponse(serviceType);
     }

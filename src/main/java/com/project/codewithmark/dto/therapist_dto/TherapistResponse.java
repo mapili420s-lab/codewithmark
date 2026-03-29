@@ -1,6 +1,11 @@
 package com.project.codewithmark.dto.therapist_dto;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.codewithmark.model.enums.AccountStatus;
+import com.project.codewithmark.model.enums.Role;
 import com.project.codewithmark.model.enums.TherapistStatus;
 
 import lombok.AllArgsConstructor;
@@ -19,4 +24,8 @@ public class TherapistResponse {
     private String email;
     private AccountStatus accountStatus;
     private TherapistStatus status;
+    private Set<Role> roles;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
 }

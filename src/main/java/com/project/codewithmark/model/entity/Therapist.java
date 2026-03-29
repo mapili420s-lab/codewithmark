@@ -1,27 +1,39 @@
 package com.project.codewithmark.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.project.codewithmark.model.enums.AccountStatus;
+import com.project.codewithmark.model.enums.Role;
 import com.project.codewithmark.model.enums.TherapistStatus;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Builder
 @Table(name = "therapists")
 public class Therapist {
 
@@ -31,9 +43,17 @@ public class Therapist {
 
     private String firstName;
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
     private String phoneNumber;
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "therapist_roles", joinColumns = @JoinColumn(name = "therapist_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus; // ACTIVE, INACTIVE, SUSPENDED
@@ -41,7 +61,22 @@ public class Therapist {
     @Enumerated(EnumType.STRING)
     private TherapistStatus status;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }

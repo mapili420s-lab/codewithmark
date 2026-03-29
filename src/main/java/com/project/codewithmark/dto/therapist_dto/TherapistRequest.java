@@ -1,8 +1,5 @@
 package com.project.codewithmark.dto.therapist_dto;
 
-import com.project.codewithmark.model.enums.AccountStatus;
-import com.project.codewithmark.model.enums.TherapistStatus;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -30,11 +27,4 @@ public class TherapistRequest {
 
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String phoneNumber;
-
-    @NotNull(message = "Status is required")
-    private AccountStatus accountStatus;
-
-    @NotNull(message = "Therapist status is required")
-    private TherapistStatus status;
-
 }
